@@ -15,7 +15,6 @@ if [ -z "$MPID" ] ; then
   query="`dd 2>/dev/null`"
   [ -n "$TUNNEL_DEBUG" ] && echo "query: <$query>" >&2
 
-  export TIMEOUT="`echo $query | sed -e 's/^.*\"timeout\": *\"//' -e 's/\".*$//g'`"
   export SSH_CMD="`echo $query | sed -e 's/^.*\"ssh_cmd\": *\"//' -e 's/\",.*$//g' -e 's/\\\"/\"/g'`"
   export LOCAL_HOST="`echo $query | sed -e 's/^.*\"local_host\": *\"//' -e 's/\".*$//g'`"
   export LOCAL_PORT="`echo $query | sed -e 's/^.*\"local_port\": *\"//' -e 's/\".*$//g'`"
@@ -28,7 +27,7 @@ if [ -z "$MPID" ] ; then
   echo "{ \"host\": \"$LOCAL_HOST\" }"
   p=`ps -p $PPID -o "ppid="`
   clog=`mktemp`
-  nohup timeout $TIMEOUT $SHELL_CMD "$ABSPATH/tunnel.sh" $p <&- >&- 2>$clog &
+  nohup $SHELL_CMD "$ABSPATH/tunnel.sh" $p <&- >&- 2>$clog &
   CPID=$!
   # A little time for the SSH tunnel process to start or fail
   sleep 3
